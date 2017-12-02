@@ -171,11 +171,23 @@ class LineObject(object):
         return self.sendVideo(to, path)
 
     @loggedIn
-    def sendAudio(self, to, path):
-        objectId = self.sendMessage(to=to, text=None, contentType = 3).id
-        files = {'file': open(path, 'rb')}
-        data = {'params': self.genOBSParams({'oid': objectId,'size': len(open(path, 'rb').read()),'type': 'audio'})}
-        r = self.server.postContent(self.server.LINE_OBS_DOMAIN + '/talk/m/upload.nhn', data=data, files=files)
+    def sendAudio(self, to_, path):
+        M2 = self.sendMessage(to=to_, text=None, contentType = 3)
+        M_id = M2.id
+        files = {
+            'file': open(path, 'rb'),
+        }
+        params = {
+            'name': 'media',
+            'oid': M_id,
+            'size': len(open(path, 'rb').read()),
+            'type': 'audio',
+            'ver': '1.0',
+        }
+        data = {
+            'params': json.dumps(params)
+        }
+        r = self.server.postContent('https://obs-sg.line-apps.com/talk/m/upload.nhn', data=data, files=files)
         if r.status_code != 201:
             raise Exception('Upload audio failure.')
         return True
