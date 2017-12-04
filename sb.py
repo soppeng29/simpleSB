@@ -18,21 +18,21 @@ cctv={
 def mention(to, nama):
     aa = ""
     bb = ""
-    strt = int(42)
-    akh = int(42)
+    strt = int(0)
+    akh = int(0)
     nm = nama
     myid = client.getProfile().mid
     if myid in nm:    
       nm.remove(myid)
     #print nm
     for mm in nm:
-      akh = akh + 2
+      akh = akh + 6
       aa += """{"S":"""+json.dumps(str(strt))+""","E":"""+json.dumps(str(akh))+""","M":"""+json.dumps(mm)+"},"""
-      strt = strt + 6
-      akh = akh + 4
-      bb += "╠ @x \n"
+      strt = strt + 7
+      akh = akh + 1
+      bb += "@nrik \n"
     aa = (aa[:int(len(aa)-1)])
-    text = "╔═══════════\n║ MENTION ALL\n╠═══════════\n"+bb+"╚═══════════\n"
+    text = bb
     try:
        client.sendMessage(to, text, contentMetadata={'MENTION':'{"MENTIONEES":['+aa+']}'}, contentType=0)
     except Exception as error:
