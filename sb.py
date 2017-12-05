@@ -132,7 +132,7 @@ while True:
                             if Name in cctv['sidermem'][op.param1]:
                                 pass
                             else:
-                                cctv['sidermem'][op.param1] += "\n・" + Name
+                                cctv['sidermem'][op.param1] += "\n~ " + Name
                                 #cl.mention(op.param1, op.param2)
                                 if " " in Name:
                                     nick = Name.split(' ')
