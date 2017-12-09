@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from linepy import *
-import json, time
+import json, time, random
 
 client = LineClient()
 #client = LineClient(authToken='AuthToken')
@@ -43,6 +43,21 @@ while True:
         ops=poll.singleTrace(count=50)
         
         for op in ops:
+            if op,type == OpType.RECEIVE_MESSAGE:
+                msg = op.message
+                if msg.text != None:
+                    if msg.toType == 2
+                        may = client.getProfile().mid
+                        if may in msg.contentMetadata:
+                            pilih = ['yang tag sy semoga jomblo seumur hidup','ngapain tag tag woe, kangen?','ada apa ini? ko di tag?','duhh kena tag, dianya kesepian kali yah','gk usah tag, gift tikel aja']
+                            rslt = random.choice(pilih)
+                            client,sendText(msg.to, srt(rslt))
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
             if op.type == OpType.SEND_MESSAGE:
                 msg = op.message
                 text = msg.text
