@@ -16,26 +16,32 @@ from thrift.transport import TTransport
 
 
 class Iface(object):
-    def fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
+    def checkUserAge(self, carrier, sessionId, verifier, standardAge):
         """
         Parameters:
-         - localRevision
-         - lastOpTimestamp
-         - count
+         - carrier
+         - sessionId
+         - verifier
+         - standardAge
         """
         pass
 
-    def getLastReadMessageIds(self, chatId):
+    def checkUserAgeWithDocomo(self, openIdRedirectUrl, standardAge, verifier):
         """
         Parameters:
-         - chatId
+         - openIdRedirectUrl
+         - standardAge
+         - verifier
         """
         pass
 
-    def multiGetLastReadMessageIds(self, chatIds):
+    def retrieveOpenIdAuthUrlWithDocomo(self):
+        pass
+
+    def retrieveRequestToken(self, carrier):
         """
         Parameters:
-         - chatIds
+         - carrier
         """
         pass
 
@@ -47,27 +53,29 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
+    def checkUserAge(self, carrier, sessionId, verifier, standardAge):
         """
         Parameters:
-         - localRevision
-         - lastOpTimestamp
-         - count
+         - carrier
+         - sessionId
+         - verifier
+         - standardAge
         """
-        self.send_fetchMessageOperations(localRevision, lastOpTimestamp, count)
-        return self.recv_fetchMessageOperations()
+        self.send_checkUserAge(carrier, sessionId, verifier, standardAge)
+        return self.recv_checkUserAge()
 
-    def send_fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
-        self._oprot.writeMessageBegin('fetchMessageOperations', TMessageType.CALL, self._seqid)
-        args = fetchMessageOperations_args()
-        args.localRevision = localRevision
-        args.lastOpTimestamp = lastOpTimestamp
-        args.count = count
+    def send_checkUserAge(self, carrier, sessionId, verifier, standardAge):
+        self._oprot.writeMessageBegin('checkUserAge', TMessageType.CALL, self._seqid)
+        args = checkUserAge_args()
+        args.carrier = carrier
+        args.sessionId = sessionId
+        args.verifier = verifier
+        args.standardAge = standardAge
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_fetchMessageOperations(self):
+    def recv_checkUserAge(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -75,32 +83,36 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = fetchMessageOperations_result()
+        result = checkUserAge_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "fetchMessageOperations failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "checkUserAge failed: unknown result")
 
-    def getLastReadMessageIds(self, chatId):
+    def checkUserAgeWithDocomo(self, openIdRedirectUrl, standardAge, verifier):
         """
         Parameters:
-         - chatId
+         - openIdRedirectUrl
+         - standardAge
+         - verifier
         """
-        self.send_getLastReadMessageIds(chatId)
-        return self.recv_getLastReadMessageIds()
+        self.send_checkUserAgeWithDocomo(openIdRedirectUrl, standardAge, verifier)
+        return self.recv_checkUserAgeWithDocomo()
 
-    def send_getLastReadMessageIds(self, chatId):
-        self._oprot.writeMessageBegin('getLastReadMessageIds', TMessageType.CALL, self._seqid)
-        args = getLastReadMessageIds_args()
-        args.chatId = chatId
+    def send_checkUserAgeWithDocomo(self, openIdRedirectUrl, standardAge, verifier):
+        self._oprot.writeMessageBegin('checkUserAgeWithDocomo', TMessageType.CALL, self._seqid)
+        args = checkUserAgeWithDocomo_args()
+        args.openIdRedirectUrl = openIdRedirectUrl
+        args.standardAge = standardAge
+        args.verifier = verifier
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_getLastReadMessageIds(self):
+    def recv_checkUserAgeWithDocomo(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -108,32 +120,27 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = getLastReadMessageIds_result()
+        result = checkUserAgeWithDocomo_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "getLastReadMessageIds failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "checkUserAgeWithDocomo failed: unknown result")
 
-    def multiGetLastReadMessageIds(self, chatIds):
-        """
-        Parameters:
-         - chatIds
-        """
-        self.send_multiGetLastReadMessageIds(chatIds)
-        return self.recv_multiGetLastReadMessageIds()
+    def retrieveOpenIdAuthUrlWithDocomo(self):
+        self.send_retrieveOpenIdAuthUrlWithDocomo()
+        return self.recv_retrieveOpenIdAuthUrlWithDocomo()
 
-    def send_multiGetLastReadMessageIds(self, chatIds):
-        self._oprot.writeMessageBegin('multiGetLastReadMessageIds', TMessageType.CALL, self._seqid)
-        args = multiGetLastReadMessageIds_args()
-        args.chatIds = chatIds
+    def send_retrieveOpenIdAuthUrlWithDocomo(self):
+        self._oprot.writeMessageBegin('retrieveOpenIdAuthUrlWithDocomo', TMessageType.CALL, self._seqid)
+        args = retrieveOpenIdAuthUrlWithDocomo_args()
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_multiGetLastReadMessageIds(self):
+    def recv_retrieveOpenIdAuthUrlWithDocomo(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -141,23 +148,57 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = multiGetLastReadMessageIds_result()
+        result = retrieveOpenIdAuthUrlWithDocomo_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "multiGetLastReadMessageIds failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "retrieveOpenIdAuthUrlWithDocomo failed: unknown result")
+
+    def retrieveRequestToken(self, carrier):
+        """
+        Parameters:
+         - carrier
+        """
+        self.send_retrieveRequestToken(carrier)
+        return self.recv_retrieveRequestToken()
+
+    def send_retrieveRequestToken(self, carrier):
+        self._oprot.writeMessageBegin('retrieveRequestToken', TMessageType.CALL, self._seqid)
+        args = retrieveRequestToken_args()
+        args.carrier = carrier
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_retrieveRequestToken(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = retrieveRequestToken_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        if result.e is not None:
+            raise result.e
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "retrieveRequestToken failed: unknown result")
 
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["fetchMessageOperations"] = Processor.process_fetchMessageOperations
-        self._processMap["getLastReadMessageIds"] = Processor.process_getLastReadMessageIds
-        self._processMap["multiGetLastReadMessageIds"] = Processor.process_multiGetLastReadMessageIds
+        self._processMap["checkUserAge"] = Processor.process_checkUserAge
+        self._processMap["checkUserAgeWithDocomo"] = Processor.process_checkUserAgeWithDocomo
+        self._processMap["retrieveOpenIdAuthUrlWithDocomo"] = Processor.process_retrieveOpenIdAuthUrlWithDocomo
+        self._processMap["retrieveRequestToken"] = Processor.process_retrieveRequestToken
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -174,13 +215,13 @@ class Processor(Iface, TProcessor):
             self._processMap[name](self, seqid, iprot, oprot)
         return True
 
-    def process_fetchMessageOperations(self, seqid, iprot, oprot):
-        args = fetchMessageOperations_args()
+    def process_checkUserAge(self, seqid, iprot, oprot):
+        args = checkUserAge_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = fetchMessageOperations_result()
+        result = checkUserAge_result()
         try:
-            result.success = self._handler.fetchMessageOperations(args.localRevision, args.lastOpTimestamp, args.count)
+            result.success = self._handler.checkUserAge(args.carrier, args.sessionId, args.verifier, args.standardAge)
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -191,18 +232,18 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("fetchMessageOperations", msg_type, seqid)
+        oprot.writeMessageBegin("checkUserAge", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    def process_getLastReadMessageIds(self, seqid, iprot, oprot):
-        args = getLastReadMessageIds_args()
+    def process_checkUserAgeWithDocomo(self, seqid, iprot, oprot):
+        args = checkUserAgeWithDocomo_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = getLastReadMessageIds_result()
+        result = checkUserAgeWithDocomo_result()
         try:
-            result.success = self._handler.getLastReadMessageIds(args.chatId)
+            result.success = self._handler.checkUserAgeWithDocomo(args.openIdRedirectUrl, args.standardAge, args.verifier)
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -213,18 +254,18 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("getLastReadMessageIds", msg_type, seqid)
+        oprot.writeMessageBegin("checkUserAgeWithDocomo", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    def process_multiGetLastReadMessageIds(self, seqid, iprot, oprot):
-        args = multiGetLastReadMessageIds_args()
+    def process_retrieveOpenIdAuthUrlWithDocomo(self, seqid, iprot, oprot):
+        args = retrieveOpenIdAuthUrlWithDocomo_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = multiGetLastReadMessageIds_result()
+        result = retrieveOpenIdAuthUrlWithDocomo_result()
         try:
-            result.success = self._handler.multiGetLastReadMessageIds(args.chatIds)
+            result.success = self._handler.retrieveOpenIdAuthUrlWithDocomo()
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -235,7 +276,29 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("multiGetLastReadMessageIds", msg_type, seqid)
+        oprot.writeMessageBegin("retrieveOpenIdAuthUrlWithDocomo", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_retrieveRequestToken(self, seqid, iprot, oprot):
+        args = retrieveRequestToken_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = retrieveRequestToken_result()
+        try:
+            result.success = self._handler.retrieveRequestToken(args.carrier)
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except TalkException as e:
+            msg_type = TMessageType.REPLY
+            result.e = e
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("retrieveRequestToken", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -243,26 +306,29 @@ class Processor(Iface, TProcessor):
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class fetchMessageOperations_args(object):
+class checkUserAge_args(object):
     """
     Attributes:
-     - localRevision
-     - lastOpTimestamp
-     - count
+     - carrier
+     - sessionId
+     - verifier
+     - standardAge
     """
 
     thrift_spec = (
         None,  # 0
         None,  # 1
-        (2, TType.I64, 'localRevision', None, None, ),  # 2
-        (3, TType.I64, 'lastOpTimestamp', None, None, ),  # 3
-        (4, TType.I32, 'count', None, None, ),  # 4
+        (2, TType.I32, 'carrier', None, None, ),  # 2
+        (3, TType.STRING, 'sessionId', 'UTF8', None, ),  # 3
+        (4, TType.STRING, 'verifier', 'UTF8', None, ),  # 4
+        (5, TType.I32, 'standardAge', None, None, ),  # 5
     )
 
-    def __init__(self, localRevision=None, lastOpTimestamp=None, count=None,):
-        self.localRevision = localRevision
-        self.lastOpTimestamp = lastOpTimestamp
-        self.count = count
+    def __init__(self, carrier=None, sessionId=None, verifier=None, standardAge=None,):
+        self.carrier = carrier
+        self.sessionId = sessionId
+        self.verifier = verifier
+        self.standardAge = standardAge
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -274,18 +340,23 @@ class fetchMessageOperations_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 2:
-                if ftype == TType.I64:
-                    self.localRevision = iprot.readI64()
+                if ftype == TType.I32:
+                    self.carrier = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.I64:
-                    self.lastOpTimestamp = iprot.readI64()
+                if ftype == TType.STRING:
+                    self.sessionId = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
+                if ftype == TType.STRING:
+                    self.verifier = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
                 if ftype == TType.I32:
-                    self.count = iprot.readI32()
+                    self.standardAge = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             else:
@@ -297,18 +368,22 @@ class fetchMessageOperations_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('fetchMessageOperations_args')
-        if self.localRevision is not None:
-            oprot.writeFieldBegin('localRevision', TType.I64, 2)
-            oprot.writeI64(self.localRevision)
+        oprot.writeStructBegin('checkUserAge_args')
+        if self.carrier is not None:
+            oprot.writeFieldBegin('carrier', TType.I32, 2)
+            oprot.writeI32(self.carrier)
             oprot.writeFieldEnd()
-        if self.lastOpTimestamp is not None:
-            oprot.writeFieldBegin('lastOpTimestamp', TType.I64, 3)
-            oprot.writeI64(self.lastOpTimestamp)
+        if self.sessionId is not None:
+            oprot.writeFieldBegin('sessionId', TType.STRING, 3)
+            oprot.writeString(self.sessionId.encode('utf-8') if sys.version_info[0] == 2 else self.sessionId)
             oprot.writeFieldEnd()
-        if self.count is not None:
-            oprot.writeFieldBegin('count', TType.I32, 4)
-            oprot.writeI32(self.count)
+        if self.verifier is not None:
+            oprot.writeFieldBegin('verifier', TType.STRING, 4)
+            oprot.writeString(self.verifier.encode('utf-8') if sys.version_info[0] == 2 else self.verifier)
+            oprot.writeFieldEnd()
+        if self.standardAge is not None:
+            oprot.writeFieldBegin('standardAge', TType.I32, 5)
+            oprot.writeI32(self.standardAge)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -328,7 +403,7 @@ class fetchMessageOperations_args(object):
         return not (self == other)
 
 
-class fetchMessageOperations_result(object):
+class checkUserAge_result(object):
     """
     Attributes:
      - success
@@ -336,7 +411,7 @@ class fetchMessageOperations_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRUCT, 'success', (MessageOperations, MessageOperations.thrift_spec), None, ),  # 0
+        (0, TType.I32, 'success', None, None, ),  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
@@ -354,9 +429,8 @@ class fetchMessageOperations_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.STRUCT:
-                    self.success = MessageOperations()
-                    self.success.read(iprot)
+                if ftype == TType.I32:
+                    self.success = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 1:
@@ -374,10 +448,10 @@ class fetchMessageOperations_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('fetchMessageOperations_result')
+        oprot.writeStructBegin('checkUserAge_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRUCT, 0)
-            self.success.write(oprot)
+            oprot.writeFieldBegin('success', TType.I32, 0)
+            oprot.writeI32(self.success)
             oprot.writeFieldEnd()
         if self.e is not None:
             oprot.writeFieldBegin('e', TType.STRUCT, 1)
@@ -401,20 +475,26 @@ class fetchMessageOperations_result(object):
         return not (self == other)
 
 
-class getLastReadMessageIds_args(object):
+class checkUserAgeWithDocomo_args(object):
     """
     Attributes:
-     - chatId
+     - openIdRedirectUrl
+     - standardAge
+     - verifier
     """
 
     thrift_spec = (
         None,  # 0
         None,  # 1
-        (2, TType.STRING, 'chatId', 'UTF8', None, ),  # 2
+        (2, TType.STRING, 'openIdRedirectUrl', 'UTF8', None, ),  # 2
+        (3, TType.I32, 'standardAge', None, None, ),  # 3
+        (4, TType.STRING, 'verifier', 'UTF8', None, ),  # 4
     )
 
-    def __init__(self, chatId=None,):
-        self.chatId = chatId
+    def __init__(self, openIdRedirectUrl=None, standardAge=None, verifier=None,):
+        self.openIdRedirectUrl = openIdRedirectUrl
+        self.standardAge = standardAge
+        self.verifier = verifier
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -427,7 +507,17 @@ class getLastReadMessageIds_args(object):
                 break
             if fid == 2:
                 if ftype == TType.STRING:
-                    self.chatId = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.openIdRedirectUrl = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.I32:
+                    self.standardAge = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.STRING:
+                    self.verifier = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -439,10 +529,18 @@ class getLastReadMessageIds_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('getLastReadMessageIds_args')
-        if self.chatId is not None:
-            oprot.writeFieldBegin('chatId', TType.STRING, 2)
-            oprot.writeString(self.chatId.encode('utf-8') if sys.version_info[0] == 2 else self.chatId)
+        oprot.writeStructBegin('checkUserAgeWithDocomo_args')
+        if self.openIdRedirectUrl is not None:
+            oprot.writeFieldBegin('openIdRedirectUrl', TType.STRING, 2)
+            oprot.writeString(self.openIdRedirectUrl.encode('utf-8') if sys.version_info[0] == 2 else self.openIdRedirectUrl)
+            oprot.writeFieldEnd()
+        if self.standardAge is not None:
+            oprot.writeFieldBegin('standardAge', TType.I32, 3)
+            oprot.writeI32(self.standardAge)
+            oprot.writeFieldEnd()
+        if self.verifier is not None:
+            oprot.writeFieldBegin('verifier', TType.STRING, 4)
+            oprot.writeString(self.verifier.encode('utf-8') if sys.version_info[0] == 2 else self.verifier)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -462,7 +560,7 @@ class getLastReadMessageIds_args(object):
         return not (self == other)
 
 
-class getLastReadMessageIds_result(object):
+class checkUserAgeWithDocomo_result(object):
     """
     Attributes:
      - success
@@ -470,7 +568,7 @@ class getLastReadMessageIds_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRUCT, 'success', (LastReadMessageIds, LastReadMessageIds.thrift_spec), None, ),  # 0
+        (0, TType.STRUCT, 'success', (AgeCheckDocomoResult, AgeCheckDocomoResult.thrift_spec), None, ),  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
@@ -489,7 +587,7 @@ class getLastReadMessageIds_result(object):
                 break
             if fid == 0:
                 if ftype == TType.STRUCT:
-                    self.success = LastReadMessageIds()
+                    self.success = AgeCheckDocomoResult()
                     self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -508,7 +606,7 @@ class getLastReadMessageIds_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('getLastReadMessageIds_result')
+        oprot.writeStructBegin('checkUserAgeWithDocomo_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
@@ -535,20 +633,10 @@ class getLastReadMessageIds_result(object):
         return not (self == other)
 
 
-class multiGetLastReadMessageIds_args(object):
-    """
-    Attributes:
-     - chatIds
-    """
+class retrieveOpenIdAuthUrlWithDocomo_args(object):
 
     thrift_spec = (
-        None,  # 0
-        None,  # 1
-        (2, TType.LIST, 'chatIds', (TType.STRING, 'UTF8', False), None, ),  # 2
     )
-
-    def __init__(self, chatIds=None,):
-        self.chatIds = chatIds
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -559,14 +647,68 @@ class multiGetLastReadMessageIds_args(object):
             (fname, ftype, fid) = iprot.readFieldBegin()
             if ftype == TType.STOP:
                 break
-            if fid == 2:
-                if ftype == TType.LIST:
-                    self.chatIds = []
-                    (_etype708, _size705) = iprot.readListBegin()
-                    for _i709 in range(_size705):
-                        _elem710 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.chatIds.append(_elem710)
-                    iprot.readListEnd()
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('retrieveOpenIdAuthUrlWithDocomo_args')
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class retrieveOpenIdAuthUrlWithDocomo_result(object):
+    """
+    Attributes:
+     - success
+     - e
+    """
+
+    thrift_spec = (
+        (0, TType.STRING, 'success', 'UTF8', None, ),  # 0
+        (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
+    )
+
+    def __init__(self, success=None, e=None,):
+        self.success = success
+        self.e = e
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.STRING:
+                    self.success = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.e = TalkException()
+                    self.e.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -578,13 +720,14 @@ class multiGetLastReadMessageIds_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('multiGetLastReadMessageIds_args')
-        if self.chatIds is not None:
-            oprot.writeFieldBegin('chatIds', TType.LIST, 2)
-            oprot.writeListBegin(TType.STRING, len(self.chatIds))
-            for iter711 in self.chatIds:
-                oprot.writeString(iter711.encode('utf-8') if sys.version_info[0] == 2 else iter711)
-            oprot.writeListEnd()
+        oprot.writeStructBegin('retrieveOpenIdAuthUrlWithDocomo_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.STRING, 0)
+            oprot.writeString(self.success.encode('utf-8') if sys.version_info[0] == 2 else self.success)
+            oprot.writeFieldEnd()
+        if self.e is not None:
+            oprot.writeFieldBegin('e', TType.STRUCT, 1)
+            self.e.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -604,7 +747,68 @@ class multiGetLastReadMessageIds_args(object):
         return not (self == other)
 
 
-class multiGetLastReadMessageIds_result(object):
+class retrieveRequestToken_args(object):
+    """
+    Attributes:
+     - carrier
+    """
+
+    thrift_spec = (
+        None,  # 0
+        None,  # 1
+        (2, TType.I32, 'carrier', None, None, ),  # 2
+    )
+
+    def __init__(self, carrier=None,):
+        self.carrier = carrier
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 2:
+                if ftype == TType.I32:
+                    self.carrier = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('retrieveRequestToken_args')
+        if self.carrier is not None:
+            oprot.writeFieldBegin('carrier', TType.I32, 2)
+            oprot.writeI32(self.carrier)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class retrieveRequestToken_result(object):
     """
     Attributes:
      - success
@@ -612,7 +816,7 @@ class multiGetLastReadMessageIds_result(object):
     """
 
     thrift_spec = (
-        (0, TType.LIST, 'success', (TType.STRUCT, (LastReadMessageIds, LastReadMessageIds.thrift_spec), False), None, ),  # 0
+        (0, TType.STRUCT, 'success', (AgeCheckRequestResult, AgeCheckRequestResult.thrift_spec), None, ),  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
@@ -630,14 +834,9 @@ class multiGetLastReadMessageIds_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.LIST:
-                    self.success = []
-                    (_etype715, _size712) = iprot.readListBegin()
-                    for _i716 in range(_size712):
-                        _elem717 = LastReadMessageIds()
-                        _elem717.read(iprot)
-                        self.success.append(_elem717)
-                    iprot.readListEnd()
+                if ftype == TType.STRUCT:
+                    self.success = AgeCheckRequestResult()
+                    self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 1:
@@ -655,13 +854,10 @@ class multiGetLastReadMessageIds_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('multiGetLastReadMessageIds_result')
+        oprot.writeStructBegin('retrieveRequestToken_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.LIST, 0)
-            oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter718 in self.success:
-                iter718.write(oprot)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
             oprot.writeFieldEnd()
         if self.e is not None:
             oprot.writeFieldBegin('e', TType.STRUCT, 1)

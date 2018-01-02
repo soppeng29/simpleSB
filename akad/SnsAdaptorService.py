@@ -16,26 +16,30 @@ from thrift.transport import TTransport
 
 
 class Iface(object):
-    def fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
+    def getSnsFriends(self, snsIdType, snsAccessToken, startIdx, limit):
         """
         Parameters:
-         - localRevision
-         - lastOpTimestamp
-         - count
+         - snsIdType
+         - snsAccessToken
+         - startIdx
+         - limit
         """
         pass
 
-    def getLastReadMessageIds(self, chatId):
+    def getSnsMyProfile(self, snsIdType, snsAccessToken):
         """
         Parameters:
-         - chatId
+         - snsIdType
+         - snsAccessToken
         """
         pass
 
-    def multiGetLastReadMessageIds(self, chatIds):
+    def postSnsInvitationMessage(self, snsIdType, snsAccessToken, toSnsUserId):
         """
         Parameters:
-         - chatIds
+         - snsIdType
+         - snsAccessToken
+         - toSnsUserId
         """
         pass
 
@@ -47,27 +51,29 @@ class Client(Iface):
             self._oprot = oprot
         self._seqid = 0
 
-    def fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
+    def getSnsFriends(self, snsIdType, snsAccessToken, startIdx, limit):
         """
         Parameters:
-         - localRevision
-         - lastOpTimestamp
-         - count
+         - snsIdType
+         - snsAccessToken
+         - startIdx
+         - limit
         """
-        self.send_fetchMessageOperations(localRevision, lastOpTimestamp, count)
-        return self.recv_fetchMessageOperations()
+        self.send_getSnsFriends(snsIdType, snsAccessToken, startIdx, limit)
+        return self.recv_getSnsFriends()
 
-    def send_fetchMessageOperations(self, localRevision, lastOpTimestamp, count):
-        self._oprot.writeMessageBegin('fetchMessageOperations', TMessageType.CALL, self._seqid)
-        args = fetchMessageOperations_args()
-        args.localRevision = localRevision
-        args.lastOpTimestamp = lastOpTimestamp
-        args.count = count
+    def send_getSnsFriends(self, snsIdType, snsAccessToken, startIdx, limit):
+        self._oprot.writeMessageBegin('getSnsFriends', TMessageType.CALL, self._seqid)
+        args = getSnsFriends_args()
+        args.snsIdType = snsIdType
+        args.snsAccessToken = snsAccessToken
+        args.startIdx = startIdx
+        args.limit = limit
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_fetchMessageOperations(self):
+    def recv_getSnsFriends(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -75,32 +81,34 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = fetchMessageOperations_result()
+        result = getSnsFriends_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "fetchMessageOperations failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "getSnsFriends failed: unknown result")
 
-    def getLastReadMessageIds(self, chatId):
+    def getSnsMyProfile(self, snsIdType, snsAccessToken):
         """
         Parameters:
-         - chatId
+         - snsIdType
+         - snsAccessToken
         """
-        self.send_getLastReadMessageIds(chatId)
-        return self.recv_getLastReadMessageIds()
+        self.send_getSnsMyProfile(snsIdType, snsAccessToken)
+        return self.recv_getSnsMyProfile()
 
-    def send_getLastReadMessageIds(self, chatId):
-        self._oprot.writeMessageBegin('getLastReadMessageIds', TMessageType.CALL, self._seqid)
-        args = getLastReadMessageIds_args()
-        args.chatId = chatId
+    def send_getSnsMyProfile(self, snsIdType, snsAccessToken):
+        self._oprot.writeMessageBegin('getSnsMyProfile', TMessageType.CALL, self._seqid)
+        args = getSnsMyProfile_args()
+        args.snsIdType = snsIdType
+        args.snsAccessToken = snsAccessToken
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_getLastReadMessageIds(self):
+    def recv_getSnsMyProfile(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -108,32 +116,36 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = getLastReadMessageIds_result()
+        result = getSnsMyProfile_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "getLastReadMessageIds failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "getSnsMyProfile failed: unknown result")
 
-    def multiGetLastReadMessageIds(self, chatIds):
+    def postSnsInvitationMessage(self, snsIdType, snsAccessToken, toSnsUserId):
         """
         Parameters:
-         - chatIds
+         - snsIdType
+         - snsAccessToken
+         - toSnsUserId
         """
-        self.send_multiGetLastReadMessageIds(chatIds)
-        return self.recv_multiGetLastReadMessageIds()
+        self.send_postSnsInvitationMessage(snsIdType, snsAccessToken, toSnsUserId)
+        self.recv_postSnsInvitationMessage()
 
-    def send_multiGetLastReadMessageIds(self, chatIds):
-        self._oprot.writeMessageBegin('multiGetLastReadMessageIds', TMessageType.CALL, self._seqid)
-        args = multiGetLastReadMessageIds_args()
-        args.chatIds = chatIds
+    def send_postSnsInvitationMessage(self, snsIdType, snsAccessToken, toSnsUserId):
+        self._oprot.writeMessageBegin('postSnsInvitationMessage', TMessageType.CALL, self._seqid)
+        args = postSnsInvitationMessage_args()
+        args.snsIdType = snsIdType
+        args.snsAccessToken = snsAccessToken
+        args.toSnsUserId = toSnsUserId
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_multiGetLastReadMessageIds(self):
+    def recv_postSnsInvitationMessage(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -141,23 +153,21 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = multiGetLastReadMessageIds_result()
+        result = postSnsInvitationMessage_result()
         result.read(iprot)
         iprot.readMessageEnd()
-        if result.success is not None:
-            return result.success
         if result.e is not None:
             raise result.e
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "multiGetLastReadMessageIds failed: unknown result")
+        return
 
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
         self._handler = handler
         self._processMap = {}
-        self._processMap["fetchMessageOperations"] = Processor.process_fetchMessageOperations
-        self._processMap["getLastReadMessageIds"] = Processor.process_getLastReadMessageIds
-        self._processMap["multiGetLastReadMessageIds"] = Processor.process_multiGetLastReadMessageIds
+        self._processMap["getSnsFriends"] = Processor.process_getSnsFriends
+        self._processMap["getSnsMyProfile"] = Processor.process_getSnsMyProfile
+        self._processMap["postSnsInvitationMessage"] = Processor.process_postSnsInvitationMessage
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -174,13 +184,13 @@ class Processor(Iface, TProcessor):
             self._processMap[name](self, seqid, iprot, oprot)
         return True
 
-    def process_fetchMessageOperations(self, seqid, iprot, oprot):
-        args = fetchMessageOperations_args()
+    def process_getSnsFriends(self, seqid, iprot, oprot):
+        args = getSnsFriends_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = fetchMessageOperations_result()
+        result = getSnsFriends_result()
         try:
-            result.success = self._handler.fetchMessageOperations(args.localRevision, args.lastOpTimestamp, args.count)
+            result.success = self._handler.getSnsFriends(args.snsIdType, args.snsAccessToken, args.startIdx, args.limit)
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -191,18 +201,18 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("fetchMessageOperations", msg_type, seqid)
+        oprot.writeMessageBegin("getSnsFriends", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    def process_getLastReadMessageIds(self, seqid, iprot, oprot):
-        args = getLastReadMessageIds_args()
+    def process_getSnsMyProfile(self, seqid, iprot, oprot):
+        args = getSnsMyProfile_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = getLastReadMessageIds_result()
+        result = getSnsMyProfile_result()
         try:
-            result.success = self._handler.getLastReadMessageIds(args.chatId)
+            result.success = self._handler.getSnsMyProfile(args.snsIdType, args.snsAccessToken)
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -213,18 +223,18 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("getLastReadMessageIds", msg_type, seqid)
+        oprot.writeMessageBegin("getSnsMyProfile", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    def process_multiGetLastReadMessageIds(self, seqid, iprot, oprot):
-        args = multiGetLastReadMessageIds_args()
+    def process_postSnsInvitationMessage(self, seqid, iprot, oprot):
+        args = postSnsInvitationMessage_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = multiGetLastReadMessageIds_result()
+        result = postSnsInvitationMessage_result()
         try:
-            result.success = self._handler.multiGetLastReadMessageIds(args.chatIds)
+            self._handler.postSnsInvitationMessage(args.snsIdType, args.snsAccessToken, args.toSnsUserId)
             msg_type = TMessageType.REPLY
         except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
             raise
@@ -235,7 +245,7 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("multiGetLastReadMessageIds", msg_type, seqid)
+        oprot.writeMessageBegin("postSnsInvitationMessage", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -243,26 +253,29 @@ class Processor(Iface, TProcessor):
 # HELPER FUNCTIONS AND STRUCTURES
 
 
-class fetchMessageOperations_args(object):
+class getSnsFriends_args(object):
     """
     Attributes:
-     - localRevision
-     - lastOpTimestamp
-     - count
+     - snsIdType
+     - snsAccessToken
+     - startIdx
+     - limit
     """
 
     thrift_spec = (
         None,  # 0
         None,  # 1
-        (2, TType.I64, 'localRevision', None, None, ),  # 2
-        (3, TType.I64, 'lastOpTimestamp', None, None, ),  # 3
-        (4, TType.I32, 'count', None, None, ),  # 4
+        (2, TType.I32, 'snsIdType', None, None, ),  # 2
+        (3, TType.STRING, 'snsAccessToken', 'UTF8', None, ),  # 3
+        (4, TType.I32, 'startIdx', None, None, ),  # 4
+        (5, TType.I32, 'limit', None, None, ),  # 5
     )
 
-    def __init__(self, localRevision=None, lastOpTimestamp=None, count=None,):
-        self.localRevision = localRevision
-        self.lastOpTimestamp = lastOpTimestamp
-        self.count = count
+    def __init__(self, snsIdType=None, snsAccessToken=None, startIdx=None, limit=None,):
+        self.snsIdType = snsIdType
+        self.snsAccessToken = snsAccessToken
+        self.startIdx = startIdx
+        self.limit = limit
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -274,18 +287,23 @@ class fetchMessageOperations_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 2:
-                if ftype == TType.I64:
-                    self.localRevision = iprot.readI64()
+                if ftype == TType.I32:
+                    self.snsIdType = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.I64:
-                    self.lastOpTimestamp = iprot.readI64()
+                if ftype == TType.STRING:
+                    self.snsAccessToken = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
                 if ftype == TType.I32:
-                    self.count = iprot.readI32()
+                    self.startIdx = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
+                if ftype == TType.I32:
+                    self.limit = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             else:
@@ -297,18 +315,22 @@ class fetchMessageOperations_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('fetchMessageOperations_args')
-        if self.localRevision is not None:
-            oprot.writeFieldBegin('localRevision', TType.I64, 2)
-            oprot.writeI64(self.localRevision)
+        oprot.writeStructBegin('getSnsFriends_args')
+        if self.snsIdType is not None:
+            oprot.writeFieldBegin('snsIdType', TType.I32, 2)
+            oprot.writeI32(self.snsIdType)
             oprot.writeFieldEnd()
-        if self.lastOpTimestamp is not None:
-            oprot.writeFieldBegin('lastOpTimestamp', TType.I64, 3)
-            oprot.writeI64(self.lastOpTimestamp)
+        if self.snsAccessToken is not None:
+            oprot.writeFieldBegin('snsAccessToken', TType.STRING, 3)
+            oprot.writeString(self.snsAccessToken.encode('utf-8') if sys.version_info[0] == 2 else self.snsAccessToken)
             oprot.writeFieldEnd()
-        if self.count is not None:
-            oprot.writeFieldBegin('count', TType.I32, 4)
-            oprot.writeI32(self.count)
+        if self.startIdx is not None:
+            oprot.writeFieldBegin('startIdx', TType.I32, 4)
+            oprot.writeI32(self.startIdx)
+            oprot.writeFieldEnd()
+        if self.limit is not None:
+            oprot.writeFieldBegin('limit', TType.I32, 5)
+            oprot.writeI32(self.limit)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -328,7 +350,7 @@ class fetchMessageOperations_args(object):
         return not (self == other)
 
 
-class fetchMessageOperations_result(object):
+class getSnsFriends_result(object):
     """
     Attributes:
      - success
@@ -336,7 +358,7 @@ class fetchMessageOperations_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRUCT, 'success', (MessageOperations, MessageOperations.thrift_spec), None, ),  # 0
+        (0, TType.STRUCT, 'success', (SnsFriends, SnsFriends.thrift_spec), None, ),  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
@@ -355,7 +377,7 @@ class fetchMessageOperations_result(object):
                 break
             if fid == 0:
                 if ftype == TType.STRUCT:
-                    self.success = MessageOperations()
+                    self.success = SnsFriends()
                     self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -374,7 +396,7 @@ class fetchMessageOperations_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('fetchMessageOperations_result')
+        oprot.writeStructBegin('getSnsFriends_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
@@ -401,20 +423,23 @@ class fetchMessageOperations_result(object):
         return not (self == other)
 
 
-class getLastReadMessageIds_args(object):
+class getSnsMyProfile_args(object):
     """
     Attributes:
-     - chatId
+     - snsIdType
+     - snsAccessToken
     """
 
     thrift_spec = (
         None,  # 0
         None,  # 1
-        (2, TType.STRING, 'chatId', 'UTF8', None, ),  # 2
+        (2, TType.I32, 'snsIdType', None, None, ),  # 2
+        (3, TType.STRING, 'snsAccessToken', 'UTF8', None, ),  # 3
     )
 
-    def __init__(self, chatId=None,):
-        self.chatId = chatId
+    def __init__(self, snsIdType=None, snsAccessToken=None,):
+        self.snsIdType = snsIdType
+        self.snsAccessToken = snsAccessToken
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -426,8 +451,13 @@ class getLastReadMessageIds_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 2:
+                if ftype == TType.I32:
+                    self.snsIdType = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
                 if ftype == TType.STRING:
-                    self.chatId = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.snsAccessToken = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -439,10 +469,14 @@ class getLastReadMessageIds_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('getLastReadMessageIds_args')
-        if self.chatId is not None:
-            oprot.writeFieldBegin('chatId', TType.STRING, 2)
-            oprot.writeString(self.chatId.encode('utf-8') if sys.version_info[0] == 2 else self.chatId)
+        oprot.writeStructBegin('getSnsMyProfile_args')
+        if self.snsIdType is not None:
+            oprot.writeFieldBegin('snsIdType', TType.I32, 2)
+            oprot.writeI32(self.snsIdType)
+            oprot.writeFieldEnd()
+        if self.snsAccessToken is not None:
+            oprot.writeFieldBegin('snsAccessToken', TType.STRING, 3)
+            oprot.writeString(self.snsAccessToken.encode('utf-8') if sys.version_info[0] == 2 else self.snsAccessToken)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -462,7 +496,7 @@ class getLastReadMessageIds_args(object):
         return not (self == other)
 
 
-class getLastReadMessageIds_result(object):
+class getSnsMyProfile_result(object):
     """
     Attributes:
      - success
@@ -470,7 +504,7 @@ class getLastReadMessageIds_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRUCT, 'success', (LastReadMessageIds, LastReadMessageIds.thrift_spec), None, ),  # 0
+        (0, TType.STRUCT, 'success', (SnsProfile, SnsProfile.thrift_spec), None, ),  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
@@ -489,7 +523,7 @@ class getLastReadMessageIds_result(object):
                 break
             if fid == 0:
                 if ftype == TType.STRUCT:
-                    self.success = LastReadMessageIds()
+                    self.success = SnsProfile()
                     self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -508,7 +542,7 @@ class getLastReadMessageIds_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('getLastReadMessageIds_result')
+        oprot.writeStructBegin('getSnsMyProfile_result')
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRUCT, 0)
             self.success.write(oprot)
@@ -535,20 +569,26 @@ class getLastReadMessageIds_result(object):
         return not (self == other)
 
 
-class multiGetLastReadMessageIds_args(object):
+class postSnsInvitationMessage_args(object):
     """
     Attributes:
-     - chatIds
+     - snsIdType
+     - snsAccessToken
+     - toSnsUserId
     """
 
     thrift_spec = (
         None,  # 0
         None,  # 1
-        (2, TType.LIST, 'chatIds', (TType.STRING, 'UTF8', False), None, ),  # 2
+        (2, TType.I32, 'snsIdType', None, None, ),  # 2
+        (3, TType.STRING, 'snsAccessToken', 'UTF8', None, ),  # 3
+        (4, TType.STRING, 'toSnsUserId', 'UTF8', None, ),  # 4
     )
 
-    def __init__(self, chatIds=None,):
-        self.chatIds = chatIds
+    def __init__(self, snsIdType=None, snsAccessToken=None, toSnsUserId=None,):
+        self.snsIdType = snsIdType
+        self.snsAccessToken = snsAccessToken
+        self.toSnsUserId = toSnsUserId
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -560,13 +600,18 @@ class multiGetLastReadMessageIds_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 2:
-                if ftype == TType.LIST:
-                    self.chatIds = []
-                    (_etype708, _size705) = iprot.readListBegin()
-                    for _i709 in range(_size705):
-                        _elem710 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.chatIds.append(_elem710)
-                    iprot.readListEnd()
+                if ftype == TType.I32:
+                    self.snsIdType = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRING:
+                    self.snsAccessToken = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.STRING:
+                    self.toSnsUserId = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -578,13 +623,18 @@ class multiGetLastReadMessageIds_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('multiGetLastReadMessageIds_args')
-        if self.chatIds is not None:
-            oprot.writeFieldBegin('chatIds', TType.LIST, 2)
-            oprot.writeListBegin(TType.STRING, len(self.chatIds))
-            for iter711 in self.chatIds:
-                oprot.writeString(iter711.encode('utf-8') if sys.version_info[0] == 2 else iter711)
-            oprot.writeListEnd()
+        oprot.writeStructBegin('postSnsInvitationMessage_args')
+        if self.snsIdType is not None:
+            oprot.writeFieldBegin('snsIdType', TType.I32, 2)
+            oprot.writeI32(self.snsIdType)
+            oprot.writeFieldEnd()
+        if self.snsAccessToken is not None:
+            oprot.writeFieldBegin('snsAccessToken', TType.STRING, 3)
+            oprot.writeString(self.snsAccessToken.encode('utf-8') if sys.version_info[0] == 2 else self.snsAccessToken)
+            oprot.writeFieldEnd()
+        if self.toSnsUserId is not None:
+            oprot.writeFieldBegin('toSnsUserId', TType.STRING, 4)
+            oprot.writeString(self.toSnsUserId.encode('utf-8') if sys.version_info[0] == 2 else self.toSnsUserId)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -604,20 +654,18 @@ class multiGetLastReadMessageIds_args(object):
         return not (self == other)
 
 
-class multiGetLastReadMessageIds_result(object):
+class postSnsInvitationMessage_result(object):
     """
     Attributes:
-     - success
      - e
     """
 
     thrift_spec = (
-        (0, TType.LIST, 'success', (TType.STRUCT, (LastReadMessageIds, LastReadMessageIds.thrift_spec), False), None, ),  # 0
+        None,  # 0
         (1, TType.STRUCT, 'e', (TalkException, TalkException.thrift_spec), None, ),  # 1
     )
 
-    def __init__(self, success=None, e=None,):
-        self.success = success
+    def __init__(self, e=None,):
         self.e = e
 
     def read(self, iprot):
@@ -629,18 +677,7 @@ class multiGetLastReadMessageIds_result(object):
             (fname, ftype, fid) = iprot.readFieldBegin()
             if ftype == TType.STOP:
                 break
-            if fid == 0:
-                if ftype == TType.LIST:
-                    self.success = []
-                    (_etype715, _size712) = iprot.readListBegin()
-                    for _i716 in range(_size712):
-                        _elem717 = LastReadMessageIds()
-                        _elem717.read(iprot)
-                        self.success.append(_elem717)
-                    iprot.readListEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 1:
+            if fid == 1:
                 if ftype == TType.STRUCT:
                     self.e = TalkException()
                     self.e.read(iprot)
@@ -655,14 +692,7 @@ class multiGetLastReadMessageIds_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('multiGetLastReadMessageIds_result')
-        if self.success is not None:
-            oprot.writeFieldBegin('success', TType.LIST, 0)
-            oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter718 in self.success:
-                iter718.write(oprot)
-            oprot.writeListEnd()
-            oprot.writeFieldEnd()
+        oprot.writeStructBegin('postSnsInvitationMessage_result')
         if self.e is not None:
             oprot.writeFieldBegin('e', TType.STRUCT, 1)
             self.e.write(oprot)

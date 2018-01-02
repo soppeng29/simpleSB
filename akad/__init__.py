@@ -1,2 +1,1 @@
-__version__ = '0.1'
-__all__ = ['ttypes', 'constants', 'CallService', 'ChannelService', 'MessageService', 'TalkService']
+__all__ = ['ttypes', 'constants', 'SquareService', 'AccountSupervisorService', 'AgeCheckService', 'BuddyManagementService', 'BuddyService', 'ChannelApplicationProvidedService', 'ChannelService', 'MessageService', 'ShopService', 'SnsAdaptorService', 'TalkService', 'UniversalNotificationService']

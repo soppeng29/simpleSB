@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-import json, shutil, time, ntpath
+import json, time, ntpath
 
 def loggedIn(func):
     def checkLogin(*args, **kwargs):
@@ -70,7 +70,7 @@ class LineObject(object):
             params = {
                 'userid': '%s' % self.profile.mid,
                 'oid': '%s' % str(objId),
-                'range': 'bytes 0-%s[-]%s' % (str(len(file)-1), str(len(file))),
+                'range': len(file),
                 'type': 'image'
             }
             hr = self.server.additionalHeaders(self.server.channelHeaders, {
@@ -95,8 +95,7 @@ class LineObject(object):
         url = self.server.urlEncode(self.server.LINE_OBS_DOMAIN, '/talk/m/download.nhn', params)
         r = self.server.getContent(url)
         if r.status_code == 200:
-            with open(saveAs, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)
+            self.saveFile(saveAs, r.raw)
             if returnAs == 'path':
                 return saveAs
             elif returnAs == 'bool':
@@ -133,19 +132,20 @@ class LineObject(object):
 
     @loggedIn
     def sendGIF(self, to, path):
+        file = open(path, 'rb').read()
         params = {
             'oid': 'reqseq',
             'reqseq': '%s' % str(self.revision),
             'tomid': '%s' % str(to),
-            'size': '%s' % str(len(open(path, 'rb').read())),
-            'range': 'bytes 0-%s[-]%s' % (str(len(open(path, 'rb').read())-1), str(len(open(path, 'rb').read()))),
+            'size': '%s' % str(len(file)),
+            'range': len(file),
             'type': 'image'
         }
         hr = self.server.additionalHeaders(self.server.Headers, {
             'Content-Type': 'image/gif',
             'x-obs-params': self.genOBSParams(params,'b64')
         })
-        r = self.server.postContent(self.server.LINE_OBS_DOMAIN + '/r/talk/m/reqseq', data=open(path, 'rb').read(), headers=hr)
+        r = self.server.postContent(self.server.LINE_OBS_DOMAIN + '/r/talk/m/reqseq', data=file, headers=hr)
         if r.status_code != 201:
             raise Exception('Upload GIF failure.')
         return True
@@ -171,23 +171,11 @@ class LineObject(object):
         return self.sendVideo(to, path)
 
     @loggedIn
-    def sendAudio(self, to_, path):
-        M2 = self.sendMessage(to=to_, text=None, contentType = 3)
-        M_id = M2.id
-        files = {
-            'file': open(path, 'rb'),
-        }
-        params = {
-            'name': 'media',
-            'oid': M_id,
-            'size': len(open(path, 'rb').read()),
-            'type': 'audio',
-            'ver': '1.0',
-        }
-        data = {
-            'params': json.dumps(params)
-        }
-        r = self.server.postContent('https://obs-sg.line-apps.com/talk/m/upload.nhn', data=data, files=files)
+    def sendAudio(self, to, path):
+        objectId = self.sendMessage(to=to, text=None, contentType = 3).id
+        files = {'file': open(path, 'rb')}
+        data = {'params': self.genOBSParams({'oid': objectId,'size': len(open(path, 'rb').read()),'type': 'audio'})}
+        r = self.server.postContent(self.server.LINE_OBS_DOMAIN + '/talk/m/upload.nhn', data=data, files=files)
         if r.status_code != 201:
             raise Exception('Upload audio failure.')
         return True
